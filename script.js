@@ -1,17 +1,17 @@
 
 /* =====================================
-   LUNORA — MAIN JAVASCRIPT
+   LUNORA — FIXED MAIN JAVASCRIPT
 ===================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
 
-  // ELEMENTS
-  const sidebar = document.getElementById("sidebar");
-  const menuBtn = document.getElementById("menuBtn");
-  const themeBtn = document.getElementById("themeBtn");
-  const navLinks = document.querySelectorAll(".nav-link[data-page]");
-  const pages = document.querySelectorAll(".page");
-  const pageTitle = document.getElementById("pageTitle");
+  const $ = selector => document.querySelector(selector);
+  const $$ = selector => document.querySelectorAll(selector);
+
+  const sidebar = $("#sidebar");
+  const menuBtn = $("#menuBtn");
+  const themeBtn = $("#themeBtn");
+  const pageTitle = $("#pageTitle");
 
   // PAGE TITLES
   const titles = {
@@ -28,30 +28,71 @@ document.addEventListener("DOMContentLoaded", () => {
     settings: "Settings ⚙"
   };
 
-  // NAVIGATION
-  function showPage(pageId) {
-    const targetPage = document.getElementById(pageId);
+  // STORAGE
+  const storage = {
+    save(key, value) {
+      try {
+        localStorage.setItem(
+          "lunora-" + key,
+          JSON.stringify(value)
+        );
+        return true;
+      } catch (error) {
+        console.error("LUNORA storage error:", error);
+        return false;
+      }
+    },
 
-    if (!targetPage || !targetPage.classList.contains("page")) {
+    get(key, fallback = []) {
+      try {
+        const value = localStorage.getItem("lunora-" + key);
+        return value === null ? fallback : JSON.parse(value);
+      } catch (error) {
+        console.error("LUNORA read error:", error);
+        return fallback;
+      }
+    }
+  };
+
+  // SAFE HTML
+  function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#039;"
+    })[char]);
+  }
+
+  // NAVIGATION
+  function showPage(pageId, updateURL = true) {
+    const target = document.getElementById(pageId);
+
+    if (!target || !target.classList.contains("page")) {
       pageId = "dashboard";
     }
 
-    pages.forEach(page => {
+    $$(".page").forEach(page => {
       page.classList.toggle("active", page.id === pageId);
     });
 
-    navLinks.forEach(link => {
+    $$(".nav-link[data-page]").forEach(link => {
       link.classList.toggle(
         "active",
         link.dataset.page === pageId
       );
     });
 
-    pageTitle.textContent = titles[pageId] || "LUNORA";
+    if (pageTitle) {
+      pageTitle.textContent = titles[pageId] || "LUNORA";
+    }
 
-    history.replaceState(null, "", "#" + pageId);
+    if (updateURL && location.hash !== "#" + pageId) {
+      history.pushState(null, "", "#" + pageId);
+    }
 
-    sidebar.classList.remove("open");
+    closeMenu();
 
     window.scrollTo({
       top: 0,
@@ -59,71 +100,112 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  navLinks.forEach(link => {
+  // NAVIGATION BUTTONS
+  $$(".nav-link[data-page]").forEach(link => {
     link.addEventListener("click", event => {
       event.preventDefault();
       showPage(link.dataset.page);
     });
   });
 
-  // DASHBOARD QUICK NAVIGATION
-  document.querySelectorAll("[data-go]").forEach(button => {
+  // QUICK NAVIGATION
+  $$("[data-go]").forEach(button => {
     button.addEventListener("click", () => {
       showPage(button.dataset.go);
     });
   });
 
-  // LOAD PAGE FROM URL
-  const initialPage = location.hash.replace("#", "");
-
-  if (initialPage && document.getElementById(initialPage)?.classList.contains("page")) {
-    showPage(initialPage);
-  }
-
-  // MOBILE MENU
-  menuBtn.addEventListener("click", () => {
-    sidebar.classList.toggle("open");
+  // BROWSER BACK / FORWARD
+  window.addEventListener("popstate", () => {
+    const page = location.hash.slice(1) || "dashboard";
+    showPage(page, false);
   });
 
-  document.addEventListener("click", event => {
-    const clickedInsideSidebar = sidebar.contains(event.target);
-    const clickedMenu = menuBtn.contains(event.target);
+  // MOBILE MENU OVERLAY
+  let overlay = $("#menuOverlay");
 
-    if (
-      window.innerWidth <= 768 &&
-      !clickedInsideSidebar &&
-      !clickedMenu
-    ) {
-      sidebar.classList.remove("open");
+  if (!overlay) {
+    overlay = document.createElement("div");
+    overlay.id = "menuOverlay";
+    overlay.className = "menu-overlay";
+    document.body.appendChild(overlay);
+  }
+
+  function openMenu() {
+    if (!sidebar) return;
+
+    sidebar.classList.add("open");
+    overlay.classList.add("visible");
+
+    if (menuBtn) {
+      menuBtn.setAttribute("aria-expanded", "true");
     }
-  });
-
-  // DARK MODE
-  const savedTheme = localStorage.getItem("lunora-theme");
-
-  if (savedTheme === "dark") {
-    document.body.classList.add("dark");
-    themeBtn.textContent = "☀";
   }
 
-  themeBtn.addEventListener("click", () => {
-    document.body.classList.toggle("dark");
+  function closeMenu() {
+    if (!sidebar) return;
 
-    const isDark = document.body.classList.contains("dark");
+    sidebar.classList.remove("open");
+    overlay.classList.remove("visible");
 
-    themeBtn.textContent = isDark ? "☀" : "☾";
+    if (menuBtn) {
+      menuBtn.setAttribute("aria-expanded", "false");
+    }
+  }
 
-    localStorage.setItem(
-      "lunora-theme",
-      isDark ? "dark" : "light"
-    );
+  if (menuBtn) {
+    menuBtn.addEventListener("click", event => {
+      event.stopPropagation();
+
+      if (sidebar.classList.contains("open")) {
+        closeMenu();
+      } else {
+        openMenu();
+      }
+    });
+  }
+
+  overlay.addEventListener("click", closeMenu);
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeMenu();
   });
+
+  // THEME
+  function applyTheme(theme) {
+    const dark = theme === "dark";
+
+    document.body.classList.toggle("dark", dark);
+
+    if (themeBtn) {
+      themeBtn.textContent = dark ? "☀" : "☾";
+      themeBtn.setAttribute(
+        "aria-label",
+        dark ? "Switch to light mode" : "Switch to dark mode"
+      );
+    }
+
+    storage.save("theme", theme);
+  }
+
+  const savedTheme = storage.get("theme", "light");
+  applyTheme(savedTheme);
+
+  if (themeBtn) {
+    themeBtn.addEventListener("click", () => {
+      const nextTheme = document.body.classList.contains("dark")
+        ? "light"
+        : "dark";
+
+      applyTheme(nextTheme);
+    });
+  }
 
   // DATE
-  const todayDate = document.getElementById("todayDate");
+  const dateElement = $("#todayDate");
 
-  if (todayDate) {
-    todayDate.textContent = new Date().toLocaleDateString(
+  if (dateElement) {
+    dateElement.textContent = new Date().toLocaleDateString(
       "en-US",
       {
         weekday: "short",
@@ -134,71 +216,14 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 
-  // STORAGE HELPER
-  const storage = {
-    save(key, value) {
-      localStorage.setItem(
-        "lunora-" + key,
-        JSON.stringify(value)
-      );
-    },
-
-    get(key, fallback = []) {
-      try {
-        const value = localStorage.getItem("lunora-" + key);
-        return value ? JSON.parse(value) : fallback;
-      } catch {
-        return fallback;
-      }
-    }
-  };
-
-  // INITIAL DATA
-  const tasks = storage.get("tasks", []);
-  const habits = storage.get("habits", []);
-  const goals = storage.get("goals", []);
-
-  // DASHBOARD STATISTICS
-  function updateDashboard() {
-    const completed = tasks.filter(task => task.completed).length;
-
-    const completedCount = document.getElementById("completedCount");
-    const habitCount = document.getElementById("habitCount");
-    const goalCount = document.getElementById("goalCount");
-    const progressCount = document.getElementById("progressCount");
-
-    if (completedCount) {
-      completedCount.textContent = completed;
-    }
-
-    if (habitCount) {
-      habitCount.textContent = habits.length;
-    }
-
-    if (goalCount) {
-      goalCount.textContent = goals.length;
-    }
-
-    if (progressCount) {
-      const progress = tasks.length
-        ? Math.round((completed / tasks.length) * 100)
-        : 0;
-
-      progressCount.textContent = progress + "%";
-    }
-  }
-
-  updateDashboard();
-
   // DASHBOARD TASK PREVIEW
   function renderDashboardTasks() {
-    const container = document.getElementById("dashboardTasks");
-
+    const container = $("#dashboardTasks");
     if (!container) return;
 
-    const latestTasks = tasks.slice(0, 5);
+    const tasks = storage.get("tasks", []);
 
-    if (latestTasks.length === 0) {
+    if (!Array.isArray(tasks) || tasks.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
           <span>✧</span>
@@ -208,33 +233,76 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    container.innerHTML = latestTasks.map(task => `
+    container.innerHTML = tasks.slice(0, 5).map(task => `
       <div class="task-preview">
         <span>${task.completed ? "✓" : "○"}</span>
-        <p>${escapeHTML(task.title)}</p>
+        <p>${escapeHTML(task.title || "Untitled task")}</p>
       </div>
     `).join("");
   }
 
-  // SAFE TEXT
-  function escapeHTML(value) {
-    return String(value).replace(/[&<>"']/g, character => ({
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#039;"
-    })[character]);
+  // DASHBOARD STATISTICS
+  function updateDashboard() {
+    const tasks = storage.get("tasks", []);
+    const habits = storage.get("habits", []);
+    const goals = storage.get("goals", []);
+
+    const safeTasks = Array.isArray(tasks) ? tasks : [];
+    const safeHabits = Array.isArray(habits) ? habits : [];
+    const safeGoals = Array.isArray(goals) ? goals : [];
+
+    const completed = safeTasks.filter(
+      task => task.completed
+    ).length;
+
+    const progress = safeTasks.length
+      ? Math.round((completed / safeTasks.length) * 100)
+      : 0;
+
+    if ($("#completedCount")) {
+      $("#completedCount").textContent = completed;
+    }
+
+    if ($("#habitCount")) {
+      $("#habitCount").textContent = safeHabits.length;
+    }
+
+    if ($("#goalCount")) {
+      $("#goalCount").textContent = safeGoals.length;
+    }
+
+    if ($("#progressCount")) {
+      $("#progressCount").textContent = progress + "%";
+    }
+
+    renderDashboardTasks();
   }
 
-  renderDashboardTasks();
+  // FIRST PAGE
+  const initialPage = location.hash.slice(1);
+  showPage(initialPage || "dashboard", false);
 
-  // SAVE DATA HELPER FOR FUTURE PAGES
+  // INITIAL DASHBOARD
+  updateDashboard();
+
+  // PUBLIC LUNORA FUNCTIONS
   window.LUNORA = {
-    save: storage.save,
-    get: storage.get,
+    save(key, value) {
+      const saved = storage.save(key, value);
+
+      if (saved) updateDashboard();
+
+      return saved;
+    },
+
+    get(key, fallback = []) {
+      return storage.get(key, fallback);
+    },
+
     updateDashboard,
+    showPage,
     escapeHTML
   };
 
 });
+
