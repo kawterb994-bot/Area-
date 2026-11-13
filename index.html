@@ -1,0 +1,325 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f4f6">
+  <meta name="description" content="LUNORA - Your personal space to organize your life.">
+
+  <title>LUNORA — Your Little World</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+      <div class="brand">
+        <div class="brand-icon">L</div>
+        <div>
+          <h2>LUNORA</h2>
+          <span>Your little world</span>
+        </div>
+      </div>
+
+      <div class="sidebar-label">MENU</div>
+
+      <nav class="navigation">
+        <a href="#dashboard" class="nav-link active" data-page="dashboard">
+          <span>⌂</span> Dashboard
+        </a>
+
+        <a href="#tasks" class="nav-link" data-page="tasks">
+          <span>✓</span> My Tasks
+        </a>
+
+        <a href="#habits" class="nav-link" data-page="habits">
+          <span>◷</span> Habits
+        </a>
+
+        <a href="#calendar" class="nav-link" data-page="calendar">
+          <span>▦</span> Calendar
+        </a>
+
+        <a href="#journal" class="nav-link" data-page="journal">
+          <span>✎</span> Journal
+        </a>
+
+        <a href="#goals" class="nav-link" data-page="goals">
+          <span>◇</span> My Goals
+        </a>
+      </nav>
+
+      <div class="sidebar-label">PERSONAL</div>
+
+      <nav class="navigation">
+        <a href="#study" class="nav-link" data-page="study">
+          <span>▤</span> Study Planner
+        </a>
+
+        <a href="#finance" class="nav-link" data-page="finance">
+          <span>＄</span> Finance
+        </a>
+
+        <a href="#health" class="nav-link" data-page="health">
+          <span>♡</span> Glow Up
+        </a>
+
+        <a href="#statistics" class="nav-link" data-page="statistics">
+          <span>▥</span> Statistics
+        </a>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <a href="#settings" class="nav-link" data-page="settings">
+          <span>⚙</span> Settings
+        </a>
+        <p>Made with love ♡</p>
+      </div>
+
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+
+      <header class="topbar">
+
+        <button class="menu-btn" id="menuBtn">☰</button>
+
+        <div class="welcome">
+          <span class="eyebrow">YOUR PERSONAL SPACE</span>
+          <h1 id="pageTitle">Good day, Sunshine ✨</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <button class="icon-btn" id="themeBtn" title="Change theme">☾</button>
+          <div class="profile-avatar">L</div>
+        </div>
+
+      </header>
+
+      <!-- PAGE CONTENT -->
+      <section id="pageContent">
+
+        <!-- DASHBOARD -->
+        <div class="page active" id="dashboard">
+
+          <div class="hero-card">
+            <div>
+              <span class="hero-label">YOUR SPACE, YOUR RULES</span>
+              <h2>A little progress<br>every day. ♡</h2>
+              <p>Make today beautiful, one step at a time.</p>
+            </div>
+            <div class="hero-decoration">✧</div>
+          </div>
+
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">OVERVIEW</span>
+              <h2>Your daily summary</h2>
+            </div>
+            <span class="date-label" id="todayDate"></span>
+          </div>
+
+          <div class="stats-grid">
+
+            <div class="stat-card">
+              <span class="stat-icon">✓</span>
+              <p>Tasks completed</p>
+              <h3 id="completedCount">0</h3>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">◷</span>
+              <p>Habits tracked</p>
+              <h3 id="habitCount">0</h3>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">◇</span>
+              <p>Active goals</p>
+              <h3 id="goalCount">0</h3>
+            </div>
+
+            <div class="stat-card">
+              <span class="stat-icon">♡</span>
+              <p>Daily progress</p>
+              <h3 id="progressCount">0%</h3>
+            </div>
+
+          </div>
+
+          <div class="content-grid">
+
+            <div class="panel">
+              <div class="panel-heading">
+                <div>
+                  <span class="eyebrow">STAY ORGANIZED</span>
+                  <h3>Today's tasks</h3>
+                </div>
+                <button class="text-btn" data-go="tasks">View all →</button>
+              </div>
+
+              <div id="dashboardTasks" class="task-list">
+                <div class="empty-state">
+                  <span>✧</span>
+                  <p>Your little steps start here.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel quote-panel">
+              <span class="quote-icon">“</span>
+              <h3>Daily reminder</h3>
+              <p>You don't have to be perfect. You just have to keep going.</p>
+              <span class="quote-footer">A NOTE TO YOURSELF ♡</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- OTHER PAGES -->
+        <div class="page" id="tasks">
+          <div class="page-heading">
+            <span class="eyebrow">GET THINGS DONE</span>
+            <h2>My Tasks ✓</h2>
+            <p>Organize your day, one task at a time.</p>
+          </div>
+          <div class="panel">
+            <h3>Coming to life soon ✨</h3>
+            <p>Your task manager will be here.</p>
+          </div>
+        </div>
+
+        <div class="page" id="habits">
+          <div class="page-heading">
+            <span class="eyebrow">BUILD YOUR ROUTINE</span>
+            <h2>My Habits ◷</h2>
+            <p>Small habits create beautiful changes.</p>
+          </div>
+          <div class="panel">
+            <h3>Your habits</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="calendar">
+          <div class="page-heading">
+            <span class="eyebrow">PLAN YOUR DAYS</span>
+            <h2>Calendar ▦</h2>
+            <p>Your time, beautifully organized.</p>
+          </div>
+          <div class="panel">
+            <h3>Your calendar</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="journal">
+          <div class="page-heading">
+            <span class="eyebrow">A SPACE FOR YOUR THOUGHTS</span>
+            <h2>My Journal ✎</h2>
+            <p>Write it down. Let it out.</p>
+          </div>
+          <div class="panel">
+            <h3>Your private journal</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="goals">
+          <div class="page-heading">
+            <span class="eyebrow">DREAM BIG</span>
+            <h2>My Goals ◇</h2>
+            <p>Turn your dreams into little plans.</p>
+          </div>
+          <div class="panel">
+            <h3>Your goals</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="study">
+          <div class="page-heading">
+            <span class="eyebrow">LEARN AND GROW</span>
+            <h2>Study Planner ▤</h2>
+            <p>Make every study session count.</p>
+          </div>
+          <div class="panel">
+            <h3>Your study space</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="finance">
+          <div class="page-heading">
+            <span class="eyebrow">MONEY MANAGEMENT</span>
+            <h2>My Finance $</h2>
+            <p>Understand your spending and savings.</p>
+          </div>
+          <div class="panel">
+            <h3>Your finances</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="health">
+          <div class="page-heading">
+            <span class="eyebrow">BECOME YOUR BEST SELF</span>
+            <h2>Glow Up ♡</h2>
+            <p>Take care of your body and mind.</p>
+          </div>
+          <div class="panel">
+            <h3>Your self-care space</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="statistics">
+          <div class="page-heading">
+            <span class="eyebrow">SEE YOUR PROGRESS</span>
+            <h2>Statistics ▥</h2>
+            <p>Every little achievement matters.</p>
+          </div>
+          <div class="panel">
+            <h3>Your statistics</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+        <div class="page" id="settings">
+          <div class="page-heading">
+            <span class="eyebrow">MAKE IT YOURS</span>
+            <h2>Settings ⚙</h2>
+            <p>Customize your little world.</p>
+          </div>
+          <div class="panel">
+            <h3>Personal settings</h3>
+            <p>Coming soon ✨</p>
+          </div>
+        </div>
+
+      </section>
+
+      <footer class="app-footer">
+        <p> LUNORA ♡ Made for your little world.</p>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <script src="script.js"></script>
+
+</body>
+</html>
