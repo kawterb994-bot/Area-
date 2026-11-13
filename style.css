@@ -595,3 +595,111 @@ button {
     font-size: 18px;
   }
 }
+
+/* =====================================
+   LUNORA — FINAL FIXES
+===================================== */
+
+/* MENU OVERLAY */
+.menu-overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .menu-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .55);
+    opacity: 0;
+    visibility: hidden;
+    transition: .3s ease;
+    z-index: 90;
+  }
+
+  .menu-overlay.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .sidebar {
+    z-index: 100;
+    width: min(280px, 85vw);
+    min-width: 0;
+    height: 100dvh;
+  }
+}
+
+/* DARK MODE */
+body.dark {
+  --bg: #111113;
+  --surface: #1e1e21;
+  --surface-soft: #29292e;
+  --text: #eeeeF2;
+  --muted: #a1a1aa;
+  --silver: #b8b9c2;
+  --border: #38383e;
+  --accent: #c0c0ca;
+  --shadow: 0 8px 30px rgba(0, 0, 0, .15);
+}
+
+body.dark .nav-link:hover,
+body.dark .nav-link.active {
+  background: #303035;
+  color: #ffffff;
+}
+
+body.dark .hero-card {
+  background: linear-gradient(120deg, #202024, #111113 55%, #29292e);
+}
+
+body.dark .hero-card h2 {
+  color: #eeeeF2;
+}
+
+body.dark .hero-card p,
+body.dark .hero-label {
+  color: #b8b8c1;
+}
+
+body.dark .quote-panel {
+  background: linear-gradient(145deg, #29292e, #1e1e21);
+}
+
+body.dark .icon-btn,
+body.dark .menu-btn {
+  background: var(--surface-soft);
+  color: var(--text);
+  border-color: var(--border);
+}
+
+body.dark .stat-card,
+body.dark .panel {
+  background: var(--surface);
+  border-color: var(--border);
+}
+
+body.dark .stat-icon {
+  background: #303035;
+  color: #d0d0d8;
+}
+
+/* BETTER MOBILE LAYOUT */
+@media (max-width: 480px) {
+  .section-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .date-label {
+    font-size: 11px;
+  }
+
+  .hero-card {
+    gap: 8px;
+  }
+
+  .hero-decoration {
+    flex-shrink: 0;
+  }
+}
